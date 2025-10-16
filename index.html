@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rocket Launch pad Controller</title>
+<style>
+/* --- Color Palette --- */
+:root {
+  --bg-color: #000000;       /* Black */
+  --primary: #FFD700;        /* Yellow */
+  --secondary: #CCCCCC;      /* Gray */
+  --text-color: #FFFFFF;     /* White */
+}
+
+/* --- Global Styles --- */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* --- Header / Title --- */
+h1 {
+  margin-top: 40px;
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-shadow: 0 0 2px var(--primary), 0 0 20px var(--primary);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+/* --- Custom Subtitle --- */
+h2 {
+  color: var(--secondary);
+  font-weight: bold;
+  text-shadow: 0 0 2px var(--secondary);
+  margin-bottom: 30px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+/* --- Button Styles --- */
+button {
+  width: 160px;
+  height: 160px;
+  border: 3px solid var(--primary);
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--text-color);
+  background: #111111;
+  cursor: pointer;
+  box-shadow: 0 0 15px var(--primary), inset 0 0 10px #222222;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  box-shadow: 0 0 25px var(--primary), inset 0 0 15px #333333;
+  transform: scale(1.05);
+}
+
+button.active {
+  background: var(--primary);
+  color: var(--bg-color);
+  box-shadow: 0 0 35px var(--primary), inset 0 0 15px #333333;
+}
+.engineMessage {
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  margin-top: 20px;
+  font-size: 1.5rem;
+  text-align: center;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* --- Footer for Custom Texts --- */
+footer {
+  position: absolute;
+  bottom: 20px;
+  color: var(--secondary);
+  font-size: 0.9rem;
+  text-align: center;
+  width: 100%;
+  text-shadow: 0 0 5px var(--secondary);
+}
+
+/* --- Glowing Lines / Techy Borders --- */
+.line {
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  margin: 10px 0;
+  animation: glowMove 2s linear infinite;
+}
+
+@keyframes glowMove {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 0%; }
+}
+</style>
+</head>
+<body>
+
+<h1>Kartis Smart Rocket Launcher</h1>
+<h2>Engine Status: <span id="statusText">OFF</span></h2>
+
+<p id="engineMessage" class="engineMessage" style="color: var(--primary); font-size: 1.2rem; margin-top: 10px;">Ready to Engage...</p>
+
+<div class="line"></div>
+
+<button id="ledBtn" onclick="toggleLED()">OFF</button>
+
+<div class="line"></div>
+
+<footer>
+  Powered by Kartis Tech ⚡ 
+  Subscribe to our <a href="https://www.youtube.com/@kartis_" target="_blank" style="color: var(--primary); text-decoration: none;">YouTube Channel</a>
+</footer>
+
+<script>
+let ledState = false;
+let timerSequence = [];
+
+function fadeMessage(newText, delay) {
+  const message = document.getElementById('engineMessage');
+  timerSequence.push(setTimeout(() => {
+    message.style.opacity = 0;           // fade out
+    setTimeout(() => {
+      message.textContent = newText;    // update text
+      message.style.opacity = 1;        // fade in
+    }, 500); // matches the CSS transition duration
+  }, delay));
+}
+
+function updateStatusText() {
+  const btn = document.getElementById('ledBtn');
+  const status = document.getElementById('statusText');
+  const message = document.getElementById('engineMessage');
+
+  // Clear any previous timers
+  timerSequence.forEach(clearTimeout);
+  timerSequence = [];
+
+  if (ledState) {
+    btn.classList.add('active');
+    btn.textContent = 'ON';
+    status.textContent = 'ON';
+
+    // Sequence for Engine message with fade
+    fadeMessage("Thrusters Engaged", 0);
+    fadeMessage("Launching", 2000);
+    fadeMessage("Launching.", 3000);
+    fadeMessage("Launching..", 4000);
+    fadeMessage("Launching...", 5000);
+    fadeMessage("Launched.", 6000);
+
+  } else {
+    btn.classList.remove('active');
+    btn.textContent = 'OFF';
+    status.textContent = 'OFF';
+    fadeMessage("Ready to Engage...", 0);
+  }
+}
+
+function toggleLED() {
+  ledState = !ledState;
+  updateStatusText();
+}
+
+// Initialize
+updateStatusText();
+
+</script>
+
+</body>
+</html>
